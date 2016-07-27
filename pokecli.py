@@ -85,8 +85,7 @@ def init_config():
     parser.add_argument(
         "-w",
         "--walk",
-        help=
-        "Walk instead of teleport with given speed (meters per second, e.g. 2.5)",
+        help="Walk instead of teleport with given speed (meters per second, e.g. 2.5)",
         type=float,
         default=2.5)
     parser.add_argument("-k",
@@ -97,15 +96,13 @@ def init_config():
     parser.add_argument(
         "-ms",
         "--max_steps",
-        help=
-        "Set the steps around your initial location(DEFAULT 5 mean 25 cells around your location)",
+        help="Set the steps around your initial location(DEFAULT 5 mean 25 cells around your location)",
         type=int,
         default=50)
     parser.add_argument(
         "-it",
         "--initial_transfer",
-        help=
-        "Transfer all duplicate pokemon with same ID on bot start, except pokemon with highest CP. Accepts a number to prevent transferring pokemon with a CP above the provided value.  Default is 0 (aka transfer none).",
+        help="Transfer all duplicate pokemon with same ID on bot start, except pokemon with highest CP. Accepts a number to prevent transferring pokemon with a CP above the provided value.  Default is 0 (aka transfer none).",
         type=int,
         default=0)
     parser.add_argument("-d",
@@ -121,16 +118,14 @@ def init_config():
     parser.add_argument(
         "-du",
         "--distance_unit",
-        help=
-        "Set the unit to display distance in (e.g, km for kilometers, mi for miles, ft for feet)",
+        help="Set the unit to display distance in (e.g, km for kilometers, mi for miles, ft for feet)",
         type=str,
         default="km")
 
     parser.add_argument(
         "-if",
         "--item_filter",
-        help=
-        "Pass a list of unwanted items to recycle when collected at a Pokestop (e.g, \"101,102,103,104\" to recycle potions when collected)",
+        help="Pass a list of unwanted items to recycle when collected at a Pokestop (e.g, \"101,102,103,104\" to recycle potions when collected)",
         type=str,
         default=[])
 
@@ -145,6 +140,8 @@ def init_config():
                         help="(Ad-hoc mode) Bot will attempt to evolve all the pokemons captured!",
                         type=bool,
                         default=False)
+
+    parser.add_argument("-il", "--item_limits", help="Max no. of items you can carry", type=str)
 
     config = parser.parse_args()
     if not config.username and 'username' not in load:
@@ -168,13 +165,16 @@ def init_config():
     if config.item_filter:
         config.item_filter = [str(item_id) for item_id in config.item_filter.split(',')]
 
+    if config.item_limits:
+        config.item_limits = dict(config.item_limits)
+
     config.release_config = {}
     if os.path.isfile(release_config_json):
         with open(release_config_json) as data:
             config.release_config.update(json.load(data))
 
     # create web dir if not exists
-    try: 
+    try:
         os.makedirs(web_dir)
     except OSError:
         if not os.path.isdir(web_dir):
