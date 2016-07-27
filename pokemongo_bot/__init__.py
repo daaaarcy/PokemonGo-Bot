@@ -5,6 +5,7 @@ import googlemaps
 import json
 import random
 import threading
+import time
 import datetime
 import sys
 import yaml
@@ -36,6 +37,7 @@ class PokemonGoBot(object):
         self.stepper.take_step()
 
     def work_on_cell(self, cell, position, include_fort_on_path):
+        self.check_session(position)
         if self.config.evolve_all:
             # Run evolve all once. Flip the bit.
             print('[#] Attempting to evolve all pokemons ...')
@@ -52,8 +54,7 @@ class PokemonGoBot(object):
             # Sort all by distance from current pos- eventually this should
             # build graph & A* it
             cell['catchable_pokemons'].sort(
-                key=
-                lambda x: distance(self.position[0], self.position[1], x['latitude'], x['longitude']))
+                key=lambda x: distance(self.position[0], self.position[1], x['latitude'], x['longitude']))
 
             user_web_catchable = 'web/catchable-%s.json' % (self.config.username)
             for pokemon in cell['catchable_pokemons']:
@@ -70,8 +71,7 @@ class PokemonGoBot(object):
             # Sort all by distance from current pos- eventually this should
             # build graph & A* it
             cell['wild_pokemons'].sort(
-                key=
-                lambda x: distance(self.position[0], self.position[1], x['latitude'], x['longitude']))
+                key=lambda x: distance(self.position[0], self.position[1], x['latitude'], x['longitude']))
             for pokemon in cell['wild_pokemons']:
                 if self.catch_pokemon(pokemon) == PokemonCatchWorker.NO_POKEBALLS:
                     break
@@ -82,7 +82,7 @@ class PokemonGoBot(object):
                 forts = [fort
                          for fort in cell['forts']
                          if 'latitude' in fort and 'type' in fort]
-		gyms = [gym for gym in cell['forts'] if 'gym_points' in gym]
+                gyms = [gym for gym in cell['forts'] if 'gym_points' in gym]
 
                 # Sort all by distance from current pos- eventually this should
                 # build graph & A* it
@@ -95,7 +95,7 @@ class PokemonGoBot(object):
                     worker = SeenFortWorker(fort, self)
                     hack_chain = worker.work()
                     if hack_chain > 10:
-                        #print('need a rest')
+                        # print('need a rest')
                         break
 
     def _setup_logging(self):
@@ -115,6 +115,33 @@ class PokemonGoBot(object):
             logging.getLogger("pgoapi").setLevel(logging.ERROR)
             logging.getLogger("rpc_api").setLevel(logging.ERROR)
 
+    def check_session(self, position):
+        # Check session expiry
+        if self.api._auth_provider and self.api._auth_provider._ticket_expire:
+            remaining_time = self.api._auth_provider._ticket_expire / 1000 - time.time()
+
+            if remaining_time < 60:
+                logger.log("Session stale, re-logging in", 'yellow')
+                self.position = position
+                self.login()
+
+    def login(self):
+        logger.log('[#] Attempting login to Pokemon Go.', 'white')
+        self.api._auth_token = None
+        self.api._auth_provider = None
+        self.api._api_endpoint = None
+        self.api.set_position(*self.position)
+
+        while not self.api.login(self.config.auth_service,
+                                 str(self.config.username),
+                                 str(self.config.password)):
+
+            logger.log('[X] Login Error, server busy', 'red')
+            logger.log('[X] Waiting 10 seconds to try again', 'red')
+            time.sleep(10)
+
+        logger.log('[+] Login to Pokemon Go successful.', 'green')
+
     def _setup_api(self):
         # instantiate pgoapi
         self.api = PGoApi()
@@ -125,17 +152,14 @@ class PokemonGoBot(object):
                 pass
         except:
             # the file does not exist, warn the user and exit.
-            logger.log('[#] IMPORTANT: Rename and configure release_config.json.example for your Pokemon release logic first!', 'red')
+            logger.log(
+                '[#] IMPORTANT: Rename and configure release_config.json.example for your Pokemon release logic first!', 'red')
             exit(0)
 
         # provide player position on the earth
         self._set_starting_position()
 
-        if not self.api.login(self.config.auth_service,
-                              str(self.config.username),
-                              str(self.config.password)):
-            logger.log('Login Error, server busy', 'red')
-            exit(0)
+        self.login()
 
         # chain subrequests (methods) into one RPC call
 
@@ -144,7 +168,7 @@ class PokemonGoBot(object):
         self.api.get_player()
 
         response_dict = self.api.call()
-        #print('Response dictionary: \n\r{}'.format(json.dumps(response_dict, indent=2)))
+        # print('Response dictionary: \n\r{}'.format(json.dumps(response_dict, indent=2)))
         currency_1 = "0"
         currency_2 = "0"
 
@@ -343,8 +367,8 @@ class PokemonGoBot(object):
         geolocator = GoogleV3(api_key=self.config.gmapkey)
         loc = geolocator.geocode(location_name, timeout=10)
 
-        #self.log.info('Your given location: %s', loc.address.encode('utf-8'))
-        #self.log.info('lat/long/alt: %s %s %s', loc.latitude, loc.longitude, loc.altitude)
+        # self.log.info('Your given location: %s', loc.address.encode('utf-8'))
+        # self.log.info('lat/long/alt: %s %s %s', loc.latitude, loc.longitude, loc.altitude)
 
         return (loc.latitude, loc.longitude, loc.altitude)
 
@@ -408,7 +432,7 @@ class PokemonGoBot(object):
                         for item in response_dict['responses'][
                                 'GET_INVENTORY']['inventory_delta'][
                                     'inventory_items']:
-                            #print('item {}'.format(item))
+                            # print('item {}'.format(item))
                             if 'inventory_item_data' in item:
                                 if 'pokemon_data' in item[
                                         'inventory_item_data']:
@@ -439,7 +463,7 @@ class PokemonGoBot(object):
                         for item in response_dict['responses'][
                                 'GET_INVENTORY']['inventory_delta'][
                                     'inventory_items']:
-                            #print('item {}'.format(item))
+                            # print('item {}'.format(item))
                             if 'inventory_item_data' in item:
                                 if 'player_stats' in item[
                                         'inventory_item_data']:
