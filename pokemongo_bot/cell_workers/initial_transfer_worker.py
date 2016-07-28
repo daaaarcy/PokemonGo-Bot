@@ -38,7 +38,7 @@ class InitialTransferWorker(object):
                     self.api.release_pokemon(
                         pokemon_id=pokemon_groups[id][group_cp[x]])
                     response_dict = self.api.call()
-                    sleep(2)
+                    sleep(0.5)
 
         logger.log('[x] Transferring Done.')
 

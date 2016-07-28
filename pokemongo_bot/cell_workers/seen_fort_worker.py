@@ -37,7 +37,7 @@ class SeenFortWorker(object):
             fort_name = 'Unknown'
         logger.log('[#] Now at Pokestop: ' + fort_name + ' - Spinning...',
                    'yellow')
-        sleep(2)
+        sleep(0.5)
         self.api.fort_search(fort_id=self.fort['id'],
                              fort_latitude=lat,
                              fort_longitude=lng,
@@ -133,7 +133,7 @@ class SeenFortWorker(object):
             else:
                 print_yellow('[#] may search too often, lets have a rest')
                 return 11
-        sleep(8)
+        sleep(0.5)
         return 0
 
     @staticmethod

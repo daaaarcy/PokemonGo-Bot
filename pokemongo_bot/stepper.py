@@ -60,7 +60,7 @@ class Stepper(object):
             (self.x, self.y) = (self.x + self.dx, self.y + self.dy)
 
             self._work_at_position(position[0], position[1], position[2], True)
-            sleep(10)
+            sleep(1)
 
     def _walk_to(self, speed, lat, lng, alt):
         dist = distance(
@@ -75,6 +75,7 @@ class Stepper(object):
             dLat = (lat - i2f(self.api._position_lat)) / steps
             dLng = (lng - i2f(self.api._position_lng)) / steps
 
+            # import pdb; pdb.set_trace()
             for i in range(intSteps):
                 cLat = i2f(self.api._position_lat) + \
                     dLat + random_lat_long_delta()

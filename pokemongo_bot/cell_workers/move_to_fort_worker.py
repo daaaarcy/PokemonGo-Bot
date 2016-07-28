@@ -24,7 +24,7 @@ class MoveToFortWorker(object):
             fortID, format_dist(dist, unit)))
 
         if dist > self.FLY_DIST:
-            logger.log('[#] Need to move closer to Pokestop (' + str(dist) + 'm away)')
+            logger.log('[#] Need to move closer to Pokestop (' + str(int(dist)) + 'm away)')
             position = (lat, lng, 0.0)
 
             if self.config.walk > 0:
