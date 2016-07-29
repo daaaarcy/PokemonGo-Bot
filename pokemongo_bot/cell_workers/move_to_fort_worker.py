@@ -39,6 +39,7 @@ class MoveToFortWorker(object):
             return response_dict
         elif dist <= self.FLY_DIST and dist > 10:
             # fly to the fort
+            position = (lat, lng, 0.0)
             self.api.set_position(*position)
             self.api.player_update(latitude=lat, longitude=lng)
             response_dict = self.api.call()
