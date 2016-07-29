@@ -19,6 +19,7 @@ from stepper import Stepper
 from geopy.geocoders import GoogleV3
 from math import radians, sqrt, sin, cos, atan2
 from item_list import Item
+from api_wrapper import ApiWrapper
 
 
 class PokemonGoBot(object):
@@ -144,7 +145,7 @@ class PokemonGoBot(object):
 
     def _setup_api(self):
         # instantiate pgoapi
-        self.api = PGoApi()
+        self.api = ApiWrapper(PGoApi())
 
         # check if the release_config file exists
         try:
