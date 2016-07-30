@@ -221,6 +221,8 @@ class PokemonGoBot(object):
         if return_value == PokemonCatchWorker.BAG_FULL:
             worker = InitialTransferWorker(self)
             worker.work()
+            evolve_worker = EvolveAllWorker(self)
+            evolve_worker.work()
 
         return return_value
 

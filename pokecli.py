@@ -147,6 +147,8 @@ def init_config():
 
     parser.add_argument("-es", "--email_status", help="Email status", type=bool, default=False)
 
+    parser.add_argument("-fd", "--fly_distance", help="Fly within this distance in meters", type=int, default=150)
+
     config = parser.parse_args()
     if not config.username and 'username' not in load:
         config.username = raw_input("Username: ")
@@ -206,6 +208,7 @@ def main():
 
     logger.log('[x] PokemonGO Bot v1.0', 'green')
     logger.log('[x] Configuration initialized', 'yellow')
+    logger.log('[x] Fly distance is {}m'.format(config.fly_distance), 'yellow')
 
     try:
         bot = PokemonGoBot(config)

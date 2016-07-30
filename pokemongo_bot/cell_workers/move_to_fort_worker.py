@@ -10,6 +10,7 @@ class MoveToFortWorker(object):
         self.config = bot.config
         self.stepper = bot.stepper
         self.position = bot.position
+        self.FLY_DIST = bot.config.fly_distance
 
     def work(self):
         lat = self.fort['latitude']
