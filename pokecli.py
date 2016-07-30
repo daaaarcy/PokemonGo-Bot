@@ -39,6 +39,7 @@ import requests
 from pokemongo_bot import logger
 from pokemongo_bot import PokemonGoBot
 from pokemongo_bot.cell_workers.utils import print_green, print_yellow, print_red
+from pokemongo_bot.human_behaviour import sleep
 
 if sys.version_info >= (2, 7, 9):
     ssl._create_default_https_context = ssl._create_unverified_context
@@ -214,6 +215,12 @@ def main():
         logger.log('[x] Exiting PokemonGo Bot', 'red')
         # TODO Add number of pokemon catched, pokestops visited, highest CP
         # pokemon catched, etc.
+    except Exception as e:
+        print_red('[x] {}'.format(e))
+        print_red('Sleep 1min and restart the bot...')
+        sleep(60)
+        print_red('Restarting bot...')
+        main()
 
 
 if __name__ == '__main__':
