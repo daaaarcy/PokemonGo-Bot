@@ -37,7 +37,7 @@ class SeenFortWorker(object):
             fort_name = 'Unknown'
         logger.log('[#] Now at Pokestop: ' + fort_name + ' - Spinning...',
                    'yellow')
-        sleep(0.5)
+        # sleep(0.5)
         self.api.fort_search(fort_id=self.fort['id'],
                              fort_latitude=lat,
                              fort_longitude=lng,
@@ -111,7 +111,7 @@ class SeenFortWorker(object):
                         'PokeStops you are indeed softbanned. Please try again '
                         'in a few hours.')
                     # raise RuntimeError(message)
-                    sleep_secs = 60
+                    sleep_secs = 10
                     print_yellow('[!] Potential softban, sleep ' + str(sleep_secs) + ' sec.')
                     sleep(sleep_secs)
                     return 11
@@ -137,7 +137,7 @@ class SeenFortWorker(object):
             else:
                 print_yellow('[#] may search too often, lets have a rest')
                 return 11
-        sleep(0.5)
+        # sleep(0.5)
         return 0
 
     @staticmethod

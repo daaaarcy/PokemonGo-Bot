@@ -127,7 +127,7 @@ class PokemonCatchWorker(object):
                                 if status is 2:
                                     logger.log(
                                         '[-] Attempted to capture {}- failed.. trying again!'.format(pokemon_name), 'red')
-                                    sleep(0.5)
+                                    # sleep(0.5)
                                     continue
                                 if status is 3:
                                     logger.log(
@@ -170,7 +170,7 @@ class PokemonCatchWorker(object):
                                         logger.log(
                                         '[x] Captured {}! [CP {}]'.format(pokemon_name, cp), 'green')
                             break
-        time.sleep(0.5)
+        # time.sleep(0.5)
 
     def _transfer_low_cp_pokemon(self, value):
         self.api.get_inventory()
@@ -193,7 +193,7 @@ class PokemonCatchWorker(object):
                 else:
                     pokemon = item['inventory_item_data']['pokemon']
                     self._execute_pokemon_transfer(value, pokemon)
-                    time.sleep(0.5)
+                    # time.sleep(0.5)
 
     def _execute_pokemon_transfer(self, value, pokemon):
         if 'cp' in pokemon and pokemon['cp'] < value:

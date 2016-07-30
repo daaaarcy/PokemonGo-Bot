@@ -35,7 +35,7 @@ class MoveToFortWorker(object):
             self.api.player_update(latitude=lat, longitude=lng)
             response_dict = self.api.call()
             logger.log('[#] Arrived at Pokestop')
-            sleep(0.5)
+            # sleep(0.5)
             return response_dict
         elif dist <= self.FLY_DIST and dist > 10:
             # fly to the fort
@@ -44,7 +44,7 @@ class MoveToFortWorker(object):
             self.api.player_update(latitude=lat, longitude=lng)
             response_dict = self.api.call()
             logger.log('[#] Flew to Pokestop (dist within ' + str(self.FLY_DIST) + 'm)')
-            sleep(0.5)
+            # sleep(0.5)
             return response_dict
         else:
             logger.log('[#] Arrived at Pokestop (within in 10m)')
