@@ -221,6 +221,7 @@ def main():
         # TODO Add number of pokemon catched, pokestops visited, highest CP
         # pokemon catched, etc.
     except Exception as e:
+        emailer.email('pokemongobotdev@gmail.com', 'darcy.qiu@gmail.com', 'Pokemon Bot Error ({})'.format(config.username), str(e))
         print_red('[x] {}'.format(e))
         print_red('Sleep 1min and restart the bot...')
         sleep(60)

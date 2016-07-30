@@ -9,6 +9,25 @@ import time, threading
 import logger
 
 
+def email(sender, recipient, subject, body):
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    me = sender
+    you = recipient
+    msg['From'] = sender
+    msg['To'] = recipient
+
+    # Send the message via our own SMTP server, but don't include the
+    # envelope header.
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s.ehlo()
+    s.starttls()
+    s.ehlo()
+    s.login(me, 'Darcy0217')
+    s.sendmail(me, [you], msg.as_string())
+    s.quit()
+    logger.log('[#] Status email sent.')
+
 def email_status(bot):
 
     # build body
