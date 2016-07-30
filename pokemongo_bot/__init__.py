@@ -20,6 +20,7 @@ from geopy.geocoders import GoogleV3
 from math import radians, sqrt, sin, cos, atan2
 from item_list import Item
 from api_wrapper import ApiWrapper
+import emailer
 
 
 class PokemonGoBot(object):
@@ -202,6 +203,9 @@ class PokemonGoBot(object):
         logger.log('[#] UltraBalls: ' + str(balls_stock[3]))
 
         self.get_player_info()
+
+        if self.config.email_status:
+            emailer.periodic_email_status(self)
 
         if self.config.initial_transfer:
             worker = InitialTransferWorker(self)

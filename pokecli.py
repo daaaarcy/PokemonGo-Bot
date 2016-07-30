@@ -40,6 +40,7 @@ from pokemongo_bot import logger
 from pokemongo_bot import PokemonGoBot
 from pokemongo_bot.cell_workers.utils import print_green, print_yellow, print_red
 from pokemongo_bot.human_behaviour import sleep
+import pokemongo_bot.emailer as emailer
 
 if sys.version_info >= (2, 7, 9):
     ssl._create_default_https_context = ssl._create_unverified_context
@@ -142,7 +143,9 @@ def init_config():
                         type=bool,
                         default=False)
 
-    parser.add_argument("-il", "--item_limits", help="Max no. of items you can carry", type=str)
+    parser.add_argument("-il", "--item_limits", help="Max no. of items you can carry", type=str, default={})
+
+    parser.add_argument("-es", "--email_status", help="Email status", type=bool, default=False)
 
     config = parser.parse_args()
     if not config.username and 'username' not in load:
@@ -188,6 +191,8 @@ def init_config():
 
 
 def main():
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
     # log settings
     # log format
     #logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(module)10s] [%(levelname)5s] %(message)s')
