@@ -71,7 +71,9 @@ class ApiWrapper(object):
                 logger.log('Server seems to be busy or offline - try again - {}/{}'.format(try_cnt, max_retry), 'red')
 
                 if try_cnt >= max_retry:
-                    raise ServerBusyOrOfflineException()
+                    # raise ServerBusyOrOfflineException()
+                    # wait for 5 min
+                    sleep(300)
                 sleep(1)
             else:
                 break

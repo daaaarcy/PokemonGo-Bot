@@ -111,8 +111,9 @@ class SeenFortWorker(object):
                         'PokeStops you are indeed softbanned. Please try again '
                         'in a few hours.')
                     # raise RuntimeError(message)
-                    print_yellow('[!] Potential softban, sleep 60 sec.')
-                    sleep(120)
+                    sleep_secs = 60
+                    print_yellow('[!] Potential softban, sleep ' + str(sleep_secs) + ' sec.')
+                    sleep(sleep_secs)
                     return 11
             elif spin_details['result'] == 2:
                 logger.log("[#] Pokestop out of range")
