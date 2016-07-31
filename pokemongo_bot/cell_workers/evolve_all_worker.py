@@ -22,7 +22,7 @@ class EvolveAllWorker(object):
             pass
         else:
             evolve_list = self._sort_by_cp(response_dict['responses']['GET_INVENTORY']['inventory_delta']['inventory_items'])
-            if self.config.evolve_all[0] != 'all':
+            if self.config.evolve_all and self.config.evolve_all[0] != 'all':
                 # filter out non-listed pokemons
                 evolve_list = [x for x in evolve_list if str(x[1]) in self.config.evolve_all]
             

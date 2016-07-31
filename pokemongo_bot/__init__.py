@@ -219,6 +219,7 @@ class PokemonGoBot(object):
         return_value = worker.work()
 
         if return_value == PokemonCatchWorker.BAG_FULL:
+            logger.log("Bag is full, call EvolveAllWorker first, then raise transfer upperbound and call InitialTransferWorker...", "red")
             evolve_worker = EvolveAllWorker(self)
             evolve_worker.work()
             self.config.initial_transfer = self.config.bag_full_transfer
