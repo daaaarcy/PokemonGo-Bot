@@ -26,6 +26,11 @@ class EvolveAllWorker(object):
                 # filter out non-listed pokemons
                 evolve_list = [x for x in evolve_list if str(x[1]) in self.config.evolve_all]
             
+            import pdb; pdb.set_trace()
+            # filter out excluded pokemons
+            evolve_list = [x for x in evolve_list if str(x[1]) not in self.config.evolve_exclude]
+            
+            
             ## enable to limit number of pokemons to evolve. Useful for testing.
             # nn = 1
             # if len(evolve_list) > nn:

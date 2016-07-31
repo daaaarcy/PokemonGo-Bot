@@ -137,6 +137,12 @@ def init_config():
                         type=str,
                         default=[])
 
+    parser.add_argument("-ex",
+                        "--evolve_exclude",
+                        help="Will not evolve pokemon in this list (e.g., \"Pidgey,Weedle,Caterpie\").",
+                        type=str,
+                        default=[])
+
     parser.add_argument("-ec",
                         "--evolve_captured",
                         help="(Ad-hoc mode) Bot will attempt to evolve all the pokemons captured!",
@@ -190,6 +196,9 @@ def init_config():
 
     if config.evolve_all:
         config.evolve_all = [str(pokemon_name) for pokemon_name in config.evolve_all.split(',')]
+    
+    if config.evolve_exclude:
+        config.evolve_exclude = [str(pokemon_name) for pokemon_name in config.evolve_exclude.split(',')]
 
     return config
 
