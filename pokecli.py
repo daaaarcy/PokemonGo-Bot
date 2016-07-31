@@ -149,6 +149,8 @@ def init_config():
 
     parser.add_argument("-fd", "--fly_distance", help="Fly within this distance in meters", type=int, default=150)
 
+    parser.add_argument("-bft", "--bag_full_transfer", help="Transfer upperbound when pokemon bag is full.", type=int, default=600)
+
     config = parser.parse_args()
     if not config.username and 'username' not in load:
         config.username = raw_input("Username: ")
