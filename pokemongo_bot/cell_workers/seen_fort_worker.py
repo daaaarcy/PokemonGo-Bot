@@ -111,7 +111,7 @@ class SeenFortWorker(object):
                         'PokeStops you are indeed softbanned. Please try again '
                         'in a few hours.')
                     # raise RuntimeError(message)
-                    sleep_secs = 5
+                    sleep_secs = 2
                     print_yellow('[!] Potential softban, sleep ' + str(sleep_secs) + ' sec.')
                     sleep(sleep_secs)
                     return 11
