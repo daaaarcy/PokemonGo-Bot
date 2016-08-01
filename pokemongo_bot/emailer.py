@@ -111,7 +111,7 @@ def email_status(bot):
         body = "Exception when getting player data."
 
     msg = MIMEText(body)
-    msg['Subject'] = 'Pokemon Bot Status'
+    msg['Subject'] = 'Pokemon Bot Status ({})'.format(bot.config.username)
     me = bot.config.sender
     you = bot.config.recipient
     msg['From'] = me
