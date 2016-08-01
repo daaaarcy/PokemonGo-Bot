@@ -29,84 +29,86 @@ def email(sender, recipient, subject, body, smtp_server, smtp_port, pwd):
     logger.log('[#] Status email sent.')
 
 def email_status(bot):
+    try:
+        # build body
+        bot.api.get_player()
 
-    # build body
-    bot.api.get_player()
+        response_dict = bot.api.call()
+        # print('Response dictionary: \n\r{}'.format(json.dumps(response_dict, indent=2)))
+        currency_1 = "0"
+        currency_2 = "0"
 
-    response_dict = bot.api.call()
-    # print('Response dictionary: \n\r{}'.format(json.dumps(response_dict, indent=2)))
-    currency_1 = "0"
-    currency_2 = "0"
+        player = response_dict['responses']['GET_PLAYER']['player_data']
 
-    player = response_dict['responses']['GET_PLAYER']['player_data']
+        # @@@ TODO: Convert this to d/m/Y H:M:S
+        creation_date = datetime.datetime.fromtimestamp(
+            player['creation_timestamp_ms'] / 1e3)
 
-    # @@@ TODO: Convert this to d/m/Y H:M:S
-    creation_date = datetime.datetime.fromtimestamp(
-        player['creation_timestamp_ms'] / 1e3)
+        pokecoins = '0'
+        stardust = '0'
+        balls_stock = bot.pokeball_inventory()
 
-    pokecoins = '0'
-    stardust = '0'
-    balls_stock = bot.pokeball_inventory()
+        if 'amount' in player['currencies'][0]:
+            pokecoins = player['currencies'][0]['amount']
+        if 'amount' in player['currencies'][1]:
+            stardust = player['currencies'][1]['amount']
 
-    if 'amount' in player['currencies'][0]:
-        pokecoins = player['currencies'][0]['amount']
-    if 'amount' in player['currencies'][1]:
-        stardust = player['currencies'][1]['amount']
+        body = ''
+        body = body + '[#] Username: {username}\n'.format(**player)
+        body = body + '[#] Acccount Creation: {}\n'.format(creation_date)
+        body = body + '[#] Bag Storage: {}/{}\n'.format(bot.get_inventory_count('item'), player['max_item_storage'])
+        body = body + '[#] Pokemon Storage: {}/{}\n'.format(
+            bot.get_inventory_count('pokemon'), player[
+                'max_pokemon_storage'])
+        body = body + '[#] Stardust: {}\n'.format(stardust)
+        body = body + '[#] Pokecoins: {}\n'.format(pokecoins)
+        body = body + '[#] PokeBalls: ' + str(balls_stock[1]) + '\n'
+        body = body + '[#] GreatBalls: ' + str(balls_stock[2]) + '\n'
+        body = body + '[#] UltraBalls: ' + str(balls_stock[3]) + '\n'
 
-    body = ''
-    body = body + '[#] Username: {username}\n'.format(**player)
-    body = body + '[#] Acccount Creation: {}\n'.format(creation_date)
-    body = body + '[#] Bag Storage: {}/{}\n'.format(bot.get_inventory_count('item'), player['max_item_storage'])
-    body = body + '[#] Pokemon Storage: {}/{}\n'.format(
-        bot.get_inventory_count('pokemon'), player[
-            'max_pokemon_storage'])
-    body = body + '[#] Stardust: {}\n'.format(stardust)
-    body = body + '[#] Pokecoins: {}\n'.format(pokecoins)
-    body = body + '[#] PokeBalls: ' + str(balls_stock[1]) + '\n'
-    body = body + '[#] GreatBalls: ' + str(balls_stock[2]) + '\n'
-    body = body + '[#] UltraBalls: ' + str(balls_stock[3]) + '\n'
+        bot.api.get_inventory()
+        response_dict = bot.api.call()
+        if 'responses' in response_dict:
+            if 'GET_INVENTORY' in response_dict['responses']:
+                if 'inventory_delta' in response_dict['responses'][
+                        'GET_INVENTORY']:
+                    if 'inventory_items' in response_dict['responses'][
+                            'GET_INVENTORY']['inventory_delta']:
+                        pokecount = 0
+                        itemcount = 1
+                        for item in response_dict['responses'][
+                                'GET_INVENTORY']['inventory_delta'][
+                                    'inventory_items']:
+                            # print('item {}'.format(item))
+                            if 'inventory_item_data' in item:
+                                if 'player_stats' in item[
+                                        'inventory_item_data']:
+                                    playerdata = item['inventory_item_data'][
+                                        'player_stats']
 
-    bot.api.get_inventory()
-    response_dict = bot.api.call()
-    if 'responses' in response_dict:
-        if 'GET_INVENTORY' in response_dict['responses']:
-            if 'inventory_delta' in response_dict['responses'][
-                    'GET_INVENTORY']:
-                if 'inventory_items' in response_dict['responses'][
-                        'GET_INVENTORY']['inventory_delta']:
-                    pokecount = 0
-                    itemcount = 1
-                    for item in response_dict['responses'][
-                            'GET_INVENTORY']['inventory_delta'][
-                                'inventory_items']:
-                        # print('item {}'.format(item))
-                        if 'inventory_item_data' in item:
-                            if 'player_stats' in item[
-                                    'inventory_item_data']:
-                                playerdata = item['inventory_item_data'][
-                                    'player_stats']
+                                    nextlvlxp = (
+                                        int(playerdata.get('next_level_xp', 0)) -
+                                        int(playerdata.get('experience', 0)))
 
-                                nextlvlxp = (
-                                    int(playerdata.get('next_level_xp', 0)) -
-                                    int(playerdata.get('experience', 0)))
+                                    if 'level' in playerdata:
+                                        body = body + '[#] -- Level: {level}\n'.format(
+                                                **playerdata)
 
-                                if 'level' in playerdata:
-                                    body = body + '[#] -- Level: {level}\n'.format(
-                                            **playerdata)
+                                    if 'experience' in playerdata:
+                                        body = body + '[#] -- Experience: {experience}\n'.format(
+                                                **playerdata)
+                                        body = body + '[#] -- Experience until next level: {}\n'.format(
+                                                nextlvlxp)
 
-                                if 'experience' in playerdata:
-                                    body = body + '[#] -- Experience: {experience}\n'.format(
-                                            **playerdata)
-                                    body = body + '[#] -- Experience until next level: {}\n'.format(
-                                            nextlvlxp)
+                                    if 'pokemons_captured' in playerdata:
+                                        body = body + '[#] -- Pokemon Captured: {pokemons_captured}\n'.format(
+                                                **playerdata)
 
-                                if 'pokemons_captured' in playerdata:
-                                    body = body + '[#] -- Pokemon Captured: {pokemons_captured}\n'.format(
-                                            **playerdata)
-
-                                if 'poke_stop_visits' in playerdata:
-                                    body = body + '[#] -- Pokestops Visited: {poke_stop_visits}\n'.format(
-                                            **playerdata)
+                                    if 'poke_stop_visits' in playerdata:
+                                        body = body + '[#] -- Pokestops Visited: {poke_stop_visits}\n'.format(
+                                                **playerdata)
+    except Exception:
+        body = "Exception when getting player data."
 
     msg = MIMEText(body)
     msg['Subject'] = 'Pokemon Bot Status'
