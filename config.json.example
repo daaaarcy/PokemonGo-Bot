@@ -22,5 +22,10 @@
             "701": 10, "702": 10, "703": 10, "704": 10, "705": 10
         },
     "email_status": false,
-    "fly_distance": 210
+    "fly_distance": 210,
+    "sender": "sender_email",
+    "recipient": "recipient_email",
+    "smtp_server": "",
+    "smtp_port": 587,
+    "email_password": "sender_email_pwd"
 }

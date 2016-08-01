@@ -157,6 +157,12 @@ def init_config():
 
     parser.add_argument("-bft", "--bag_full_transfer", help="Transfer upperbound when pokemon bag is full.", type=int, default=600)
 
+    parser.add_argument("-sd", "--sender", help="", type=str)
+    parser.add_argument("-rp", "--recipient", help="", type=str)
+    parser.add_argument("-ss", "--smtp_server", help="", type=str, default='smtp.gmail.com')
+    parser.add_argument("-sp", "--smtp_port", help="", type=int, default=587)    
+    parser.add_argument("-ep", "--email_password", help="", type=str)
+
     config = parser.parse_args()
     if not config.username and 'username' not in load:
         config.username = raw_input("Username: ")
@@ -235,7 +241,8 @@ def main():
         # TODO Add number of pokemon catched, pokestops visited, highest CP
         # pokemon catched, etc.
     except Exception as e:
-        emailer.email('pokemongobotdev@gmail.com', 'darcy.qiu@gmail.com', 'Pokemon Bot Error ({})'.format(config.username), str(e))
+        emailer.email(config.sender, config.recipient, 'Pokemon Bot Error ({})'.format(config.username), 
+            str(e), config.smtp_server, config.smtp_port, config.email_password)
         print_red('[x] {}'.format(e))
         print_red('Sleep 1min and restart the bot...')
         sleep(60)

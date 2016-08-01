@@ -9,7 +9,7 @@ import time, threading
 import logger
 
 
-def email(sender, recipient, subject, body):
+def email(sender, recipient, subject, body, smtp_server, smtp_port, pwd):
     msg = MIMEText(body)
     msg['Subject'] = subject
     me = sender
@@ -19,11 +19,11 @@ def email(sender, recipient, subject, body):
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
-    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s = smtplib.SMTP(smtp_server, smtp_port)
     s.ehlo()
     s.starttls()
     s.ehlo()
-    s.login(me, 'Darcy0217')
+    s.login(me, pwd)
     s.sendmail(me, [you], msg.as_string())
     s.quit()
     logger.log('[#] Status email sent.')
@@ -110,18 +110,18 @@ def email_status(bot):
 
     msg = MIMEText(body)
     msg['Subject'] = 'Pokemon Bot Status'
-    me = 'pokemongobotdev@gmail.com'
-    you = 'darcy.qiu@gmail.com'
+    me = bot.config.sender
+    you = bot.config.recipient
     msg['From'] = me
     msg['To'] = you
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
-    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s = smtplib.SMTP(bot.config.smtp_server, bot.config.smtp_port)
     s.ehlo()
     s.starttls()
     s.ehlo()
-    s.login(me, 'Darcy0217')
+    s.login(me, bot.config.email_password)
     s.sendmail(me, [you], msg.as_string())
     s.quit()
     logger.log('[#] Status email sent.')
