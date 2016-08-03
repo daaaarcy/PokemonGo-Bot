@@ -65,6 +65,14 @@ class Stepper(object):
     def _walk_to(self, speed, lat, lng, alt):
         dist = distance(
             i2f(self.api._position_lat), i2f(self.api._position_lng), lat, lng)
+        logger.log('[#] Walking distance: {}m'.format(dist))
+
+        # speed up if distance is large
+        if dist < self.config.fly_distance:
+            self.api.set_position(lat, lng, alt)
+            logger.log('[#] Flew to ({}, {})'.format(lat, lng))
+            return
+
         steps = (dist + 0.0) / (speed + 0.0)  # may be rational number
         intSteps = int(steps)
         residuum = steps - intSteps
